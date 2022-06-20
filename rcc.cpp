@@ -98,6 +98,191 @@ namespace
         [[maybe_unused]] constexpr uint32_t SW      = (0x03UL << Position::SW);
       }
     }
+    
+    namespace AHB1ENR
+    {
+      namespace Position
+      {
+        constexpr uint32_t OTGHSEN   = 29UL;
+        constexpr uint32_t DMA2EN    = 22UL;
+        constexpr uint32_t DMA1EN    = 21UL;
+        constexpr uint32_t DTCMRAMEN = 20UL;
+        constexpr uint32_t BKPSRAMEN = 18UL;
+        constexpr uint32_t CRCEN     = 12UL;
+        constexpr uint32_t GPIOIEN   = 8UL;
+        constexpr uint32_t GPIOHEN   = 7UL;
+        constexpr uint32_t GPIOGEN   = 6UL;
+        constexpr uint32_t GPIOFEN   = 5UL;
+        constexpr uint32_t GPIOEEN   = 4UL;
+        constexpr uint32_t GPIODEN   = 3UL;
+        constexpr uint32_t GPIOCEN   = 2UL;
+        constexpr uint32_t GPIOBEN   = 1UL;
+        constexpr uint32_t GPIOAEN   = 0UL;
+      }
+      
+       namespace Mask
+      {
+        [[maybe_unused]] constexpr uint32_t OTGHSEN   = (1UL << Position::OTGHSEN);
+        [[maybe_unused]] constexpr uint32_t DMA2EN    = (1UL << Position::DMA2EN);
+        [[maybe_unused]] constexpr uint32_t DMA1EN    = (1UL << Position::DMA1EN);
+        [[maybe_unused]] constexpr uint32_t DTCMRAMEN = (1UL << Position::DTCMRAMEN);
+        [[maybe_unused]] constexpr uint32_t BKPSRAMEN = (1UL << Position::BKPSRAMEN);
+        [[maybe_unused]] constexpr uint32_t CRCEN     = (1UL << Position::CRCEN);
+        [[maybe_unused]] constexpr uint32_t GPIOIEN   = (1UL << Position::GPIOIEN);
+        [[maybe_unused]] constexpr uint32_t GPIOHEN   = (1UL << Position::GPIOHEN);
+        [[maybe_unused]] constexpr uint32_t GPIOGEN   = (1UL << Position::GPIOGEN);
+        [[maybe_unused]] constexpr uint32_t GPIOFEN   = (1UL << Position::GPIOFEN);
+        [[maybe_unused]] constexpr uint32_t GPIOEEN   = (1UL << Position::GPIOEEN);
+        [[maybe_unused]] constexpr uint32_t GPIODEN   = (1UL << Position::GPIODEN);
+        [[maybe_unused]] constexpr uint32_t GPIOCEN   = (1UL << Position::GPIOCEN);
+        [[maybe_unused]] constexpr uint32_t GPIOBEN   = (1UL << Position::GPIOBEN);
+        [[maybe_unused]] constexpr uint32_t GPIOAEN   = (1UL << Position::GPIOAEN);
+      }
+    }
+    
+    namespace AHB2ENR
+    {
+      namespace Position
+      {
+        constexpr uint32_t OTGFSEN = 7UL;
+        constexpr uint32_t RNGEN   = 6UL;
+        constexpr uint32_t AESEN   = 4UL;
+      }
+      
+      namespace Mask
+      {
+        [[maybe_unused]] constexpr uint32_t OTGFSEN = (1UL << Position::OTGFSEN);
+        [[maybe_unused]] constexpr uint32_t RNGEN   = (1UL << Position::RNGEN);
+        [[maybe_unused]] constexpr uint32_t AESEN   = (1UL << Position::AESEN);
+      }
+    }
+    
+    namespace AHB3ENR
+    {
+      namespace Position
+      {
+        constexpr uint32_t QSPIEN = 1UL;
+        constexpr uint32_t FMCEN  = 0UL;
+      }
+      
+      namespace Mask
+      {
+        [[maybe_unused]] constexpr uint32_t QSPIEN = (1UL << Position::QSPIEN);
+        [[maybe_unused]] constexpr uint32_t FMCEN  = (1UL << Position::FMCEN);
+      }
+    }
+    
+    namespace APB1ENR
+    {
+      namespace Position
+      {
+        constexpr uint32_t UART8EN  = 31UL;
+        constexpr uint32_t UART7EN  = 30UL;
+        constexpr uint32_t DACEN    = 29UL;
+        constexpr uint32_t PWREN    = 28UL;
+        constexpr uint32_t CAN1EN   = 25UL;
+        constexpr uint32_t I2C3EN   = 23UL;
+        constexpr uint32_t I2C2EN   = 22UL;
+        constexpr uint32_t I2C1EN   = 21UL;
+        constexpr uint32_t UART5EN  = 20UL;
+        constexpr uint32_t UART4EN  = 19UL;
+        constexpr uint32_t USART3EN = 18UL;
+        constexpr uint32_t USART2EN = 17UL;
+        constexpr uint32_t SPI3EN   = 15UL;
+        constexpr uint32_t SPI2EN   = 14UL;
+        constexpr uint32_t WWDGEN   = 11UL;
+        constexpr uint32_t RTCAPBEN = 10UL;
+        constexpr uint32_t LPTIM1EN = 9UL;
+        constexpr uint32_t TIM14EN  = 8UL;
+        constexpr uint32_t TIM13EN  = 7UL;
+        constexpr uint32_t TIM12EN  = 6UL;
+        constexpr uint32_t TIM7EN   = 5UL;
+        constexpr uint32_t TIM6EN   = 4UL;
+        constexpr uint32_t TIM5EN   = 3UL;
+        constexpr uint32_t TIM4EN   = 2UL;
+        constexpr uint32_t TIM3EN   = 1UL;
+        constexpr uint32_t TIM2EN   = 0UL;
+      }
+      
+      namespace Mask
+      {
+        [[maybe_unused]] constexpr uint32_t UART8EN  = (1UL << Position::UART8EN);
+        [[maybe_unused]] constexpr uint32_t UART7EN  = (1UL << Position::UART7EN);
+        [[maybe_unused]] constexpr uint32_t DACEN    = (1UL << Position::DACEN);
+        [[maybe_unused]] constexpr uint32_t PWREN    = (1UL << Position::PWREN);
+        [[maybe_unused]] constexpr uint32_t CAN1EN   = (1UL << Position::CAN1EN);
+        [[maybe_unused]] constexpr uint32_t I2C3EN   = (1UL << Position::I2C3EN);
+        [[maybe_unused]] constexpr uint32_t I2C2EN   = (1UL << Position::I2C2EN);
+        [[maybe_unused]] constexpr uint32_t I2C1EN   = (1UL << Position::I2C1EN);
+        [[maybe_unused]] constexpr uint32_t UART5EN  = (1UL << Position::UART5EN);
+        [[maybe_unused]] constexpr uint32_t UART4EN  = (1UL << Position::UART4EN);
+        [[maybe_unused]] constexpr uint32_t USART3EN = (1UL << Position::USART3EN);
+        [[maybe_unused]] constexpr uint32_t USART2EN = (1UL << Position::USART2EN);
+        [[maybe_unused]] constexpr uint32_t SPI3EN   = (1UL << Position::SPI3EN);
+        [[maybe_unused]] constexpr uint32_t SPI2EN   = (1UL << Position::SPI2EN);
+        [[maybe_unused]] constexpr uint32_t WWDGEN   = (1UL << Position::WWDGEN);
+        [[maybe_unused]] constexpr uint32_t RTCAPBEN = (1UL << Position::RTCAPBEN);
+        [[maybe_unused]] constexpr uint32_t LPTIM1EN = (1UL << Position::LPTIM1EN);
+        [[maybe_unused]] constexpr uint32_t TIM14EN  = (1UL << Position::TIM14EN);
+        [[maybe_unused]] constexpr uint32_t TIM13EN  = (1UL << Position::TIM13EN);
+        [[maybe_unused]] constexpr uint32_t TIM12EN  = (1UL << Position::TIM12EN);
+        [[maybe_unused]] constexpr uint32_t TIM7EN   = (1UL << Position::TIM7EN);
+        [[maybe_unused]] constexpr uint32_t TIM6EN   = (1UL << Position::TIM6EN);
+        [[maybe_unused]] constexpr uint32_t TIM5EN   = (1UL << Position::TIM5EN);
+        [[maybe_unused]] constexpr uint32_t TIM4EN   = (1UL << Position::TIM4EN);
+        [[maybe_unused]] constexpr uint32_t TIM3EN   = (1UL << Position::TIM3EN);
+        [[maybe_unused]] constexpr uint32_t TIM2EN   = (1UL << Position::TIM2EN);
+      }
+    }
+    
+    namespace APB2ENR
+    {
+      namespace Position
+      {
+        constexpr uint32_t OTGPHYCEN = 31UL;
+        constexpr uint32_t SAI2EN    = 23UL;
+        constexpr uint32_t SAI1EN    = 22UL;
+        constexpr uint32_t SPI5EN    = 20UL;
+        constexpr uint32_t TIM11EN   = 18UL;
+        constexpr uint32_t TIM10EN   = 17UL;
+        constexpr uint32_t TIM9EN    = 16UL;
+        constexpr uint32_t SYSCFGEN  = 14UL;
+        constexpr uint32_t SPI4EN    = 13UL;
+        constexpr uint32_t SPI1EN    = 12UL;
+        constexpr uint32_t SDMMC1EN  = 11UL;
+        constexpr uint32_t ADC3EN    = 10UL;
+        constexpr uint32_t ADC2EN    = 9UL;
+        constexpr uint32_t ADC1EN    = 8UL;
+        constexpr uint32_t SDMMC2EN  = 7UL;
+        constexpr uint32_t USART6EN  = 5UL;
+        constexpr uint32_t USART1EN  = 4UL;
+        constexpr uint32_t TIM8EN    = 1UL;
+        constexpr uint32_t TIM1EN    = 0UL;
+      }
+      
+      namespace Mask
+      {
+        [[maybe_unused]] constexpr uint32_t OTGPHYCEN = (1UL << Position::OTGPHYCEN);
+        [[maybe_unused]] constexpr uint32_t SAI2EN    = (1UL << Position::SAI2EN);
+        [[maybe_unused]] constexpr uint32_t SAI1EN    = (1UL << Position::SAI1EN);
+        [[maybe_unused]] constexpr uint32_t SPI5EN    = (1UL << Position::SPI5EN);
+        [[maybe_unused]] constexpr uint32_t TIM11EN   = (1UL << Position::TIM11EN);
+        [[maybe_unused]] constexpr uint32_t TIM10EN   = (1UL << Position::TIM10EN);
+        [[maybe_unused]] constexpr uint32_t TIM9EN    = (1UL << Position::TIM9EN);
+        [[maybe_unused]] constexpr uint32_t SYSCFGEN  = (1UL << Position::SYSCFGEN);
+        [[maybe_unused]] constexpr uint32_t SPI4EN    = (1UL << Position::SPI4EN);
+        [[maybe_unused]] constexpr uint32_t SPI1EN    = (1UL << Position::SPI1EN);
+        [[maybe_unused]] constexpr uint32_t SDMMC1EN  = (1UL << Position::SDMMC1EN);
+        [[maybe_unused]] constexpr uint32_t ADC3EN    = (1UL << Position::ADC3EN);
+        [[maybe_unused]] constexpr uint32_t ADC2EN    = (1UL << Position::ADC2EN);
+        [[maybe_unused]] constexpr uint32_t ADC1EN    = (1UL << Position::ADC1EN);
+        [[maybe_unused]] constexpr uint32_t SDMMC2EN  = (1UL << Position::SDMMC2EN);
+        [[maybe_unused]] constexpr uint32_t USART6EN  = (1UL << Position::USART6EN);
+        [[maybe_unused]] constexpr uint32_t USART1EN  = (1UL << Position::USART1EN);
+        [[maybe_unused]] constexpr uint32_t TIM8EN    = (1UL << Position::TIM8EN);
+        [[maybe_unused]] constexpr uint32_t TIM1EN    = (1UL << Position::TIM1EN);
+      }
+    }
   }
   
   struct RCCRegisters
@@ -242,7 +427,7 @@ void RCC::ConfigurePLL(uint32_t PLLQ, uint32_t PLLP, uint32_t PLLN, uint32_t PLL
       break;
     default:
       while(1); //todo assert
-      break;
+//      break;
   }
   
   if(PLLClockSource::HSEOscillator == clockSource)
@@ -332,4 +517,210 @@ void RCC::ConfigureBusDividers(APBDivider apb1Divider, APBDivider apb2Divider, A
   }
   
   Interface->CFGR = cfgr;
+}
+
+void RCC::EnablePeripheralClock(Peripheral peripheral)
+{
+  switch(peripheral)
+  {
+    case Peripheral::OTGHS:
+      Interface->AHB1ENR |= Registers::AHB1ENR::Mask::OTGHSEN;
+      break;
+    case Peripheral::DMA2:
+      Interface->AHB1ENR |= Registers::AHB1ENR::Mask::DMA2EN;
+      break;
+    case Peripheral::DMA1:
+      Interface->AHB1ENR |= Registers::AHB1ENR::Mask::DMA1EN;
+      break;
+    case Peripheral::DTCMRAM:
+      Interface->AHB1ENR |= Registers::AHB1ENR::Mask::DTCMRAMEN;
+      break;
+    case Peripheral::BKPSRAMEN:
+      Interface->AHB1ENR |= Registers::AHB1ENR::Mask::BKPSRAMEN;
+      break;
+    case Peripheral::CRC:
+      Interface->AHB1ENR |= Registers::AHB1ENR::Mask::CRCEN;
+      break;
+    case Peripheral::GPIOI:
+      Interface->AHB1ENR |= Registers::AHB1ENR::Mask::GPIOIEN;
+      break;
+    case Peripheral::GPIOH:
+      Interface->AHB1ENR |= Registers::AHB1ENR::Mask::GPIOHEN;
+      break;
+    case Peripheral::GPIOG:
+      Interface->AHB1ENR |= Registers::AHB1ENR::Mask::GPIOGEN;
+      break;
+    case Peripheral::GPIOF:
+      Interface->AHB1ENR |= Registers::AHB1ENR::Mask::GPIOFEN;
+      break;
+    case Peripheral::GPIOE:
+      Interface->AHB1ENR |= Registers::AHB1ENR::Mask::GPIOEEN;
+      break;
+    case Peripheral::GPIOD:
+      Interface->AHB1ENR |= Registers::AHB1ENR::Mask::GPIODEN;
+      break;
+    case Peripheral::GPIOC:
+      Interface->AHB1ENR |= Registers::AHB1ENR::Mask::GPIOCEN;
+      break;
+    case Peripheral::GPIOB:
+      Interface->AHB1ENR |= Registers::AHB1ENR::Mask::GPIOBEN;
+      break;
+    case Peripheral::GPIOA:
+      Interface->AHB1ENR |= Registers::AHB1ENR::Mask::GPIOAEN;
+      break;
+    case Peripheral::OTGFS:
+      Interface->AHB2ENR |= Registers::AHB2ENR::Mask::OTGFSEN;
+      break;
+    case Peripheral::RNG:
+      Interface->AHB2ENR |= Registers::AHB2ENR::Mask::RNGEN;
+      break;
+    case Peripheral::AES:
+      Interface->AHB2ENR |= Registers::AHB2ENR::Mask::AESEN;
+      break;
+    case Peripheral::QSPI:
+      Interface->AHB3ENR |= Registers::AHB3ENR::Mask::QSPIEN;
+      break;
+    case Peripheral::FMC:
+      Interface->AHB3ENR |= Registers::AHB3ENR::Mask::FMCEN;
+      break;
+    case Peripheral::UART8:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::UART8EN;
+      break;
+    case Peripheral::UART7:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::UART7EN;
+      break;
+    case Peripheral::DAC:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::DACEN;
+      break;
+    case Peripheral::PWR:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::PWREN;
+      break;
+    case Peripheral::CAN1:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::CAN1EN;
+      break;
+    case Peripheral::I2C3:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::I2C3EN;
+      break;
+    case Peripheral::I2C2:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::I2C2EN;
+      break;
+    case Peripheral::I2C1:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::I2C1EN;
+      break;
+    case Peripheral::UART5:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::UART5EN;
+      break;
+    case Peripheral::UART4:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::UART4EN;
+      break;
+    case Peripheral::USART3:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::USART3EN;
+      break;
+    case Peripheral::USART2:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::USART2EN;
+      break;
+    case Peripheral::SPI3:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::SPI3EN;
+      break;
+    case Peripheral::SPI2:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::SPI2EN;
+      break;
+    case Peripheral::WWDG:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::WWDGEN;
+      break;
+    case Peripheral::RTCAPB:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::RTCAPBEN;
+      break;
+    case Peripheral::LPTIM1:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::LPTIM1EN;
+      break;
+    case Peripheral::TIM14:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::TIM14EN;
+      break;
+    case Peripheral::TIM13:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::TIM13EN;
+      break;
+    case Peripheral::TIM12:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::TIM12EN;
+      break;
+    case Peripheral::TIM7:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::TIM7EN;
+      break;
+    case Peripheral::TIM6:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::TIM6EN;
+      break;
+    case Peripheral::TIM5:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::TIM5EN;
+      break;
+    case Peripheral::TIM4:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::TIM4EN;
+      break;
+    case Peripheral::TIM3:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::TIM3EN;
+      break;
+    case Peripheral::TIM2:
+      Interface->APB1ENR |= Registers::APB1ENR::Mask::TIM2EN;
+      break;
+    case Peripheral::OTGPHYC:
+      Interface->APB2ENR |= Registers::APB2ENR::Mask::OTGPHYCEN;
+      break;
+    case Peripheral::SAI2:
+      Interface->APB2ENR |= Registers::APB2ENR::Mask::SAI2EN;
+      break;
+    case Peripheral::SAI1:
+      Interface->APB2ENR |= Registers::APB2ENR::Mask::SAI1EN;
+      break;
+    case Peripheral::SPI5EN:
+      Interface->APB2ENR |= Registers::APB2ENR::Mask::SPI5EN;
+      break;
+    case Peripheral::TIM11:
+      Interface->APB2ENR |= Registers::APB2ENR::Mask::TIM11EN;
+      break;
+    case Peripheral::TIM10:
+      Interface->APB2ENR |= Registers::APB2ENR::Mask::TIM10EN;
+      break;
+    case Peripheral::TIM9:
+      Interface->APB2ENR |= Registers::APB2ENR::Mask::TIM9EN;
+      break;
+    case Peripheral::SYSCFG:
+      Interface->APB2ENR |= Registers::APB2ENR::Mask::SYSCFGEN;
+      break;
+    case Peripheral::SPI4:
+      Interface->APB2ENR |= Registers::APB2ENR::Mask::SPI4EN;
+      break;
+    case Peripheral::SPI1:
+      Interface->APB2ENR |= Registers::APB2ENR::Mask::SPI1EN;
+      break;
+    case Peripheral::SDMMC1:
+      Interface->APB2ENR |= Registers::APB2ENR::Mask::SDMMC1EN;
+      break;
+    case Peripheral::ADC3:
+      Interface->APB2ENR |= Registers::APB2ENR::Mask::ADC3EN;
+      break;
+    case Peripheral::ADC2:
+      Interface->APB2ENR |= Registers::APB2ENR::Mask::ADC2EN;
+      break;
+    case Peripheral::ADC1:
+      Interface->APB2ENR |= Registers::APB2ENR::Mask::ADC1EN;
+      break;
+    case Peripheral::SDMMC2:
+      Interface->APB2ENR |= Registers::APB2ENR::Mask::SDMMC2EN;
+      break;
+    case Peripheral::USART6:
+      Interface->APB2ENR |= Registers::APB2ENR::Mask::USART6EN;
+      break;
+    case Peripheral::USART1:
+      Interface->APB2ENR |= Registers::APB2ENR::Mask::USART1EN;
+      break;
+    case Peripheral::TIM8:
+      Interface->APB2ENR |= Registers::APB2ENR::Mask::TIM8EN;
+      break;
+    case Peripheral::TIM1:
+      Interface->APB2ENR |= Registers::APB2ENR::Mask::TIM1EN;
+      break;
+  }
+  
+  //delay a couple of clock cycles
+  asm("isb");
+  asm("dmb");
 }
