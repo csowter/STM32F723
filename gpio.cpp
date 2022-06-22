@@ -33,7 +33,7 @@ namespace
     volatile uint32_t OTYPER;
     volatile uint32_t OSPEEDR;
     volatile uint32_t PUPDR;
-    volatile uint32_t IDR;
+    const volatile uint32_t IDR;
     volatile uint32_t ODR;
     volatile uint32_t BSRR;
     volatile uint32_t LCKR;
