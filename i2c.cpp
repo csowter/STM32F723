@@ -1,5 +1,4 @@
 #include "i2c.h"
-#include <cstdint>
 #include <cstddef>
 #include <array>
 
@@ -71,6 +70,8 @@ namespace
         constexpr uint32_t ADD10   = 11UL;
         constexpr uint32_t RD_WRN  = 10UL;
         constexpr uint32_t SADD    = 0UL;
+        constexpr uint32_t SADD10  = 0UL;
+        constexpr uint32_t SADD7   = 0UL;
       }
       
       namespace Mask
@@ -334,4 +335,97 @@ I2C::I2C(I2CPort i2cInstance)
 : instance_m{i2cInstance}
 {
   I2CInstances[static_cast<std::size_t>(instance_m)] = this;
+}
+
+void I2C::ConfigureTiming(uint32_t clockPrescaler, uint32_t setupTime, 
+            uint32_t holdTime, uint32_t highPeriod, uint32_t lowPeriod)
+{
+  const uint32_t prescaler = ((clockPrescaler << Registers::TIMINGR::Position::PRESC) & Registers::TIMINGR::Mask::PRESC);
+  const uint32_t setup = ((setupTime << Registers::TIMINGR::Position::SCLDEL) & Registers::TIMINGR::Mask::SCLDEL);
+  const uint32_t hold = ((holdTime << Registers::TIMINGR::Position::SDADEL) & Registers::TIMINGR::Mask::SDADEL);
+  const uint32_t high = ((highPeriod << Registers::TIMINGR::Position::SCLH) & Registers::TIMINGR::Mask::SCLH);
+  const uint32_t low = ((lowPeriod << Registers::TIMINGR::Position::SCLL) & Registers::TIMINGR::Mask::SCLL);
+  
+  const uint32_t timingValue = prescaler | setup | hold | high | low;
+  
+  I2CRegisters *registers = I2CInstance(instance_m);
+  registers->TIMINGR = timingValue;
+}
+
+void I2C::SetEnabled(bool enabled)
+{
+  I2CRegisters *registers = I2CInstance(instance_m);
+  
+  if(true == enabled)
+  {
+    registers->CR1 |= Registers::CR1::Mask::PE;
+  }
+  else
+  {
+    registers->CR1 &= ~Registers::CR1::Mask::PE;
+  }
+}
+
+void I2C::Write(uint32_t address, bool isAddress7Bit, const uint8_t *data, uint32_t length)
+{
+  I2CRegisters *registers = I2CInstance(instance_m);
+  
+  registers->CR2 &= ~(Registers::CR2::Mask::SADD |
+                      Registers::CR2::Mask::RD_WRN |
+                      Registers::CR2::Mask::NBYTES);
+  registers->CR2 |= (length << Registers::CR2::Position::NBYTES) |
+                    (Registers::CR2::Mask::AUTOEND);
+  
+  if(true == isAddress7Bit)
+  {
+    registers->CR2 &= ~Registers::CR2::Mask::ADD10;
+    registers->CR2 |= (address << Registers::CR2::Position::SADD7);
+  }
+  else
+  {
+    registers->CR2 |= Registers::CR2::Mask::ADD10;    
+    registers->CR2 |= (address << Registers::CR2::Position::SADD10);
+  }
+  
+  registers->CR2 |= Registers::CR2::Mask::START;
+  
+  for(uint32_t i = 0; i < length; i++)
+  {
+    while(Registers::ISR::Mask::TXIS != (registers->ISR & Registers::ISR::Mask::TXIS));
+    registers->TXDR = data[i];
+  }
+  
+  while(Registers::ISR::Mask::STOPF != (registers->ISR & Registers::ISR::Mask::STOPF)); //wait for stop to send
+  registers->ICR = Registers::ICR::Mask::STOPCF;
+}
+
+void I2C::Read(uint32_t address, bool isAddress7Bit, uint8_t *rxBuffer, uint32_t length)
+{
+  I2CRegisters *registers = I2CInstance(instance_m);
+  
+  registers->CR2 &= ~(Registers::CR2::Mask::SADD |
+                      Registers::CR2::Mask::RD_WRN |
+                      Registers::CR2::Mask::NBYTES);
+  registers->CR2 |= (length << Registers::CR2::Position::NBYTES) |
+                    (Registers::CR2::Mask::AUTOEND) |
+                    (Registers::CR2::Mask::RD_WRN);
+  
+  if(true == isAddress7Bit)
+  {
+    registers->CR2 &= ~Registers::CR2::Mask::ADD10;
+    registers->CR2 |= (address << Registers::CR2::Position::SADD7);
+  }
+  else
+  {
+    registers->CR2 |= Registers::CR2::Mask::ADD10;    
+    registers->CR2 |= (address << Registers::CR2::Position::SADD10);
+  }
+  
+  registers->CR2 |= Registers::CR2::Mask::START;
+  
+  for(uint32_t i = 0; i < length; i++)
+  {
+    while(Registers::ISR::Mask::RXNE != (registers->ISR & Registers::ISR::Mask::RXNE));
+    rxBuffer[i] = static_cast<uint8_t>(registers->RXDR);
+  }
 }

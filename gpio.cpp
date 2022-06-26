@@ -143,6 +143,19 @@ void GPIO::SetAlternateFunction(AlternateFunction af)
   instance->AFR[index] |= (static_cast<uint32_t>(af) << position);  
 }
 
+void GPIO::SetOutputType(OutputType type)
+{
+  GPIORegisters * const instance{GPIOInstance(port_m)};
+  if(OutputType::OpenDrain == type)
+  {
+    instance->OTYPER |= (1UL << static_cast<uint32_t>(pin_m));
+  }
+  else //(OutputType::PushPull == type)
+  {
+    instance->OTYPER &= ~(1UL << static_cast<uint32_t>(pin_m));
+  }
+}
+
 void GPIO::SetOutputState(State state)
 {
   GPIORegisters * const instance{GPIOInstance(port_m)};

@@ -77,10 +77,17 @@ public:
     Low
   };
   
+  enum class OutputType
+  {
+    OpenDrain,
+    PushPull
+  };
+  
   GPIO(Port port, Pin pin);
   void SetMode(Mode mode);
   void SetSpeed(Speed speed);
   void SetAlternateFunction(AlternateFunction af);
+  void SetOutputType(OutputType type);
   
   void SetOutputState(State state);
   State GetInputState();
