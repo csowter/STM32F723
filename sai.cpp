@@ -265,3 +265,7 @@ namespace
     return SAIPorts[static_cast<std::size_t>(port)];
   }
 }
+
+SAI::SAI(Port port)
+: port_m{port}
+{}
