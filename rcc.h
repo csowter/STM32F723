@@ -109,13 +109,30 @@ public:
     TIM8,
     TIM1
   };
+  
+  enum class SAIInstance 
+  {
+    SAI1,
+    SAI2
+  };
+  
+  enum class SAIClockSource
+  {
+    PLLSAI,
+    PLLI2S,
+    AlternateFunctionInput
+  };
 
   static void EnableHSE(bool bypass);
   static void EnablePLL();
   static bool PLLReady();
+  static void EnableSAIPLL();
+  static bool SAIPLLReady();
   static void SetClockSource(SystemClockSource clockSource);
   static void ConfigurePLL(uint32_t PLLQ, uint32_t PLLP, uint32_t PLLN, uint32_t PLLM, PLLClockSource clockSource);
+  static void ConfigureSAIPLL(uint32_t PLLQ, uint32_t PLLP, uint32_t PLLN, uint32_t DIVQ);
   static void ConfigureBusDividers(APBDivider apb1Divider, APBDivider apb2Divider, AHBDivider ahbDivider);
   static void EnablePeripheralClock(Peripheral peripheral);
+  static void SetSAIClockSource(SAIInstance instance, SAIClockSource clockSource);
 };
 #endif

@@ -283,6 +283,44 @@ namespace
         [[maybe_unused]] constexpr uint32_t TIM1EN    = (1UL << Position::TIM1EN);
       }
     }
+    
+    namespace PLLSAICFGR
+    {
+      namespace Position
+      {
+        constexpr uint32_t PLLSAIQ = 24UL;
+        constexpr uint32_t PLLSAIP = 16UL;
+        constexpr uint32_t PLLSAIN = 6UL;
+      }
+      
+      namespace Mask
+      {
+        [[maybe_unused]] constexpr uint32_t PLLSAIQ = (0x0FUL << Position::PLLSAIQ);
+        [[maybe_unused]] constexpr uint32_t PLLSAIP = (0x03UL << Position::PLLSAIP);
+        [[maybe_unused]] constexpr uint32_t PLLSAIN = (0x1FFUL << Position::PLLSAIN);
+      }
+    }
+    
+    namespace DKCFGR1
+    {
+      namespace Position
+      {
+        constexpr uint32_t TIMPRE     = 24UL;
+        constexpr uint32_t SAI2SEL    = 22UL;
+        constexpr uint32_t SAI1SEL    = 20UL;
+        constexpr uint32_t PLLSAIDIVQ = 8UL;
+        constexpr uint32_t PLLI2SDIVQ = 0UL;
+      }
+      
+      namespace Mask
+      {
+        [[maybe_unused]] constexpr uint32_t TIMPRE     = (0x01UL << Position::TIMPRE);
+        [[maybe_unused]] constexpr uint32_t SAI2SEL    = (0x03UL << Position::SAI2SEL);
+        [[maybe_unused]] constexpr uint32_t SAI1SEL    = (0x03UL << Position::SAI1SEL);
+        [[maybe_unused]] constexpr uint32_t PLLSAIDIVQ = (0x1FUL << Position::PLLSAIDIVQ);
+        [[maybe_unused]] constexpr uint32_t PLLI2SDIVQ = (0x1FUL << Position::PLLI2SDIVQ);
+      }
+    }
   }
   
   struct RCCRegisters
@@ -723,4 +761,71 @@ void RCC::EnablePeripheralClock(Peripheral peripheral)
   //delay a couple of clock cycles
   asm("isb");
   asm("dmb");
+}
+
+void RCC::EnableSAIPLL()
+{
+  Interface->CR |= Registers::CR::Mask::PLLSAION;
+}
+
+bool RCC::SAIPLLReady()
+{
+  return Registers::CR::Mask::PLLSAIRDY == (Interface->CR & Registers::CR::Mask::PLLSAIRDY);
+}
+
+void RCC::ConfigureSAIPLL(uint32_t PLLQ, uint32_t PLLP, uint32_t PLLN, uint32_t DIVQ)
+{
+  PLLQ <<= Registers::PLLSAICFGR::Position::PLLSAIQ;
+  PLLP <<= Registers::PLLSAICFGR::Position::PLLSAIP;
+  PLLN <<= Registers::PLLSAICFGR::Position::PLLSAIN;
+  
+  const uint32_t pllsaicfgr = PLLQ | PLLP | PLLN;
+  
+  constexpr uint32_t mask = Registers::PLLSAICFGR::Mask::PLLSAIQ | 
+                            Registers::PLLSAICFGR::Mask::PLLSAIP |
+                            Registers::PLLSAICFGR::Mask::PLLSAIN;
+  
+  Interface->PLLSAICFGR = (pllsaicfgr & mask);
+  
+  
+  DIVQ <<= Registers::DKCFGR1::Position::PLLSAIDIVQ;
+  DIVQ &= Registers::DKCFGR1::Mask::PLLSAIDIVQ;
+  
+  uint32_t dckcfgr1 = Interface->DCKCFGR1;
+  dckcfgr1 &= ~Registers::DKCFGR1::Mask::PLLSAIDIVQ;
+  dckcfgr1 |= DIVQ;
+  Interface->DCKCFGR1 = dckcfgr1;
+}
+
+void RCC::SetSAIClockSource(SAIInstance instance, SAIClockSource clockSource)
+{
+  uint32_t clockSourceBits{0UL};
+  
+  switch(clockSource)
+  {
+    case SAIClockSource::PLLSAI:
+      clockSourceBits = 0x00UL;
+      break;
+    case SAIClockSource::PLLI2S:
+      clockSourceBits = 0x01UL;
+      break;
+    case SAIClockSource::AlternateFunctionInput:
+      clockSourceBits = 0x02UL;
+      break;
+  }
+  
+  uint32_t dckcfgr1 = Interface->DCKCFGR1;
+  if(SAIInstance::SAI1 == instance)
+  {
+    
+    dckcfgr1 &= ~Registers::DKCFGR1::Mask::SAI1SEL;
+    clockSourceBits <<= Registers::DKCFGR1::Position::SAI1SEL;
+  }
+  else
+  {
+    dckcfgr1 &= ~Registers::DKCFGR1::Mask::SAI2SEL;
+    clockSourceBits <<= Registers::DKCFGR1::Position::SAI2SEL;
+  }
+  dckcfgr1 |= clockSourceBits;
+  Interface->DCKCFGR1 = dckcfgr1;
 }
