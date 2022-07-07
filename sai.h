@@ -20,14 +20,10 @@ public:
   
   enum class Mode
   {
-    Master,
-    Slave
-  };
-  
-  enum class Direction
-  {
-    Transmit,
-    Receive
+    MasterTransmitter,
+    MasterReceiver,
+    SlaveTransmitter,
+    SlaveReceiver
   };
   
   enum class DataSize
@@ -64,9 +60,15 @@ public:
     StartOfFrameAndChannelSide
   };
   
+  enum class SlotSize
+  {
+    sz_DataSize,
+    sz_16Bit,
+    sz_32Bit
+  };
+  
   SAI(Port port);
   void SetMode(Block block, Mode mode);
-  void SetDirection(Block block, Direction direction);
   void Enable(Block block);
   void Disable(Block block);
   void SetDataSize(Block block, DataSize size);
@@ -76,7 +78,7 @@ public:
   void SetFrameSynchronizationActiveLevelLength(Block block, uint8_t clockCycleCount);
   void SetFrameSynchronizationOffset(Block block, FrameSyncOffset offset);
   void SetFrameSynchronizationSignalRole(Block block, FrameSyncRole role);
-  void SetSlotConfiguration(Block block, uint8_t numberOfSlots, uint8_t slotSize);
+  void SetSlotConfiguration(Block block, uint8_t numberOfSlots, SlotSize slotSize);
   
 private:
   Port port_m;

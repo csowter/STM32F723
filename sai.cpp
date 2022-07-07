@@ -213,44 +213,41 @@ namespace
     
   }
   
+  struct Block
+  {
+    volatile uint32_t CR1;
+    volatile uint32_t CR2;
+    volatile uint32_t FRCR;
+    volatile uint32_t SLOTR;
+    volatile uint32_t IM;
+    volatile uint32_t SR;
+    volatile uint32_t CLRFR;
+    volatile uint32_t DR;
+  };
+  
   struct SAIRegisters
   {
     volatile uint32_t GCR;
-    volatile uint32_t ACR1;
-    volatile uint32_t ACR2;
-    volatile uint32_t AFRCR;
-    volatile uint32_t ASLOTR;
-    volatile uint32_t AIM;
-    volatile uint32_t ASR;
-    volatile uint32_t ACLRFR;
-    volatile uint32_t ADR;
-    volatile uint32_t BCR1;
-    volatile uint32_t BCR2;
-    volatile uint32_t BFRCR;
-    volatile uint32_t BSLOTR;
-    volatile uint32_t BIM;
-    volatile uint32_t BSR;
-    volatile uint32_t BCLRFR;
-    volatile uint32_t BDR;
+    Block block[2];
   };
   
   static_assert(0x00U == offsetof(SAIRegisters, GCR));
-  static_assert(0x04U == offsetof(SAIRegisters, ACR1));
-  static_assert(0x08U == offsetof(SAIRegisters, ACR2));
-  static_assert(0x0CU == offsetof(SAIRegisters, AFRCR));
-  static_assert(0x10U == offsetof(SAIRegisters, ASLOTR));
-  static_assert(0x14U == offsetof(SAIRegisters, AIM));
-  static_assert(0x18U == offsetof(SAIRegisters, ASR));
-  static_assert(0x1CU == offsetof(SAIRegisters, ACLRFR));
-  static_assert(0x20U == offsetof(SAIRegisters, ADR));
-  static_assert(0x24U == offsetof(SAIRegisters, BCR1));
-  static_assert(0x28U == offsetof(SAIRegisters, BCR2));
-  static_assert(0x2CU == offsetof(SAIRegisters, BFRCR));
-  static_assert(0x30U == offsetof(SAIRegisters, BSLOTR));
-  static_assert(0x34U == offsetof(SAIRegisters, BIM));
-  static_assert(0x38U == offsetof(SAIRegisters, BSR));
-  static_assert(0x3CU == offsetof(SAIRegisters, BCLRFR));
-  static_assert(0x40U == offsetof(SAIRegisters, BDR));
+  static_assert(0x04U == offsetof(SAIRegisters, block[0].CR1));
+  static_assert(0x08U == offsetof(SAIRegisters, block[0].CR2));
+  static_assert(0x0CU == offsetof(SAIRegisters, block[0].FRCR));
+  static_assert(0x10U == offsetof(SAIRegisters, block[0].SLOTR));
+  static_assert(0x14U == offsetof(SAIRegisters, block[0].IM));
+  static_assert(0x18U == offsetof(SAIRegisters, block[0].SR));
+  static_assert(0x1CU == offsetof(SAIRegisters, block[0].CLRFR));
+  static_assert(0x20U == offsetof(SAIRegisters, block[0].DR));
+  static_assert(0x24U == offsetof(SAIRegisters, block[1].CR1));
+  static_assert(0x28U == offsetof(SAIRegisters, block[1].CR2));
+  static_assert(0x2CU == offsetof(SAIRegisters, block[1].FRCR));
+  static_assert(0x30U == offsetof(SAIRegisters, block[1].SLOTR));
+  static_assert(0x34U == offsetof(SAIRegisters, block[1].IM));
+  static_assert(0x38U == offsetof(SAIRegisters, block[1].SR));
+  static_assert(0x3CU == offsetof(SAIRegisters, block[1].CLRFR));
+  static_assert(0x40U == offsetof(SAIRegisters, block[1].DR));
   
   constexpr uint32_t SAI1BaseAddress = 0x40015800UL;
   constexpr uint32_t SAI2BaseAddress = 0x40015C00UL;
@@ -269,3 +266,184 @@ namespace
 SAI::SAI(Port port)
 : port_m{port}
 {}
+  
+void SAI::SetMode(Block block, Mode mode)
+{
+  uint32_t newMode;
+  switch(mode)
+  {
+    case Mode::MasterTransmitter:
+      newMode = 0x00UL << Registers::xCR1::Position::MODE;
+      break;
+    case Mode::MasterReceiver:
+      newMode = 0x01UL << Registers::xCR1::Position::MODE;
+      break;
+    case Mode::SlaveTransmitter:
+      newMode = 0x02UL << Registers::xCR1::Position::MODE;
+      break;
+    case Mode::SlaveReceiver:
+      newMode = 0x03UL << Registers::xCR1::Position::MODE;
+      break;
+  }
+  
+  SAIRegisters * const instance = GetInstance(port_m);
+  
+  uint32_t cr1 = instance->block[static_cast<uint32_t>(block)].CR1;
+  cr1 &= ~Registers::xCR1::Mask::MODE;
+  cr1 |= newMode;
+  instance->block[static_cast<uint32_t>(block)].CR1 = newMode;
+}
+  
+void SAI::Enable(Block block)
+{
+  SAIRegisters * const instance = GetInstance(port_m);
+  instance->block[static_cast<uint32_t>(block)].CR1 |= Registers::xCR1::Mask::SAIEN;
+}
+  
+void SAI::Disable(Block block)
+{
+  SAIRegisters * const instance = GetInstance(port_m);
+  instance->block[static_cast<uint32_t>(block)].CR1 &= ~Registers::xCR1::Mask::SAIEN;
+}
+  
+void SAI::SetDataSize(Block block, DataSize size)
+{
+  uint32_t dataSizeBits;
+  switch(size)
+  {
+    case DataSize::DS_8Bit:
+      dataSizeBits = 0x02UL << Registers::xCR1::Position::DS;
+      break;
+    case DataSize::DS_10Bit:
+      dataSizeBits = 0x03UL << Registers::xCR1::Position::DS;
+      break;
+    case DataSize::DS_16Bit:
+      dataSizeBits = 0x04UL << Registers::xCR1::Position::DS;
+      break;
+    case DataSize::DS_20Bit:
+      dataSizeBits = 0x05UL << Registers::xCR1::Position::DS;
+      break;
+    case DataSize::DS_24Bit:
+      dataSizeBits = 0x06UL << Registers::xCR1::Position::DS;
+      break;
+    case DataSize::DS_32Bit: 
+      dataSizeBits = 0x07UL << Registers::xCR1::Position::DS;
+      break;
+  }
+  
+  SAIRegisters * const instance = GetInstance(port_m);
+  uint32_t cr1 = instance->block[static_cast<uint32_t>(block)].CR1;
+  cr1 &= ~Registers::xCR1::Mask::DS;
+  cr1 |= dataSizeBits;
+  instance->block[static_cast<uint32_t>(block)].CR1 = cr1;
+}
+  
+void SAI::SetFirstBit(Block block, FirstBit bit)
+{
+  SAIRegisters * const instance = GetInstance(port_m);
+  
+  if(FirstBit::MSB == bit)
+  {
+    instance->block[static_cast<uint32_t>(block)].CR1 &= ~Registers::xCR1::Mask::LSBFIRST;
+  }
+  else
+  {
+    instance->block[static_cast<uint32_t>(block)].CR1 |= Registers::xCR1::Mask::LSBFIRST;
+  }
+}
+  
+void SAI::SetFrameLength(Block block, uint16_t length)
+{
+  SAIRegisters * const instance = GetInstance(port_m);
+  
+  instance->block[static_cast<uint32_t>(block)].FRCR &= ~Registers::xFRCR::Mask::FRL;
+  uint32_t lengthBits = (length - 1U) << Registers::xFRCR::Position::FRL;
+  lengthBits &= Registers::xFRCR::Mask::FRL;
+  instance->block[static_cast<uint32_t>(block)].FRCR |= lengthBits;  
+}
+  
+void SAI::SetFrameSynchronizationPolarity(Block block, FrameSyncEdge edge)
+{
+  SAIRegisters * const instance = GetInstance(port_m);
+  if(FrameSyncEdge::Falling == edge)
+  {
+    instance->block[static_cast<uint32_t>(block)].FRCR &= ~Registers::xFRCR::Mask::FSPOL;
+  }
+  else
+  {
+    instance->block[static_cast<uint32_t>(block)].FRCR |= Registers::xFRCR::Mask::FSPOL;
+  }
+}
+  
+void SAI::SetFrameSynchronizationActiveLevelLength(Block block, uint8_t clockCycleCount)
+{
+  SAIRegisters * const instance = GetInstance(port_m);
+  uint32_t countBits = clockCycleCount - 1U;
+  countBits <<= Registers::xFRCR::Position::FSALL;
+  countBits &= Registers::xFRCR::Mask::FSALL;
+  
+  uint32_t frcr = instance->block[static_cast<uint32_t>(block)].FRCR;
+  frcr &= ~Registers::xFRCR::Mask::FSALL;
+  frcr |= countBits;
+  instance->block[static_cast<uint32_t>(block)].FRCR = frcr;
+}
+  
+void SAI::SetFrameSynchronizationOffset(Block block, FrameSyncOffset offset)
+{
+  SAIRegisters * const instance = GetInstance(port_m);
+  
+  if(FrameSyncOffset::FirstBit == offset)
+  {
+    instance->block[static_cast<uint32_t>(block)].FRCR &= ~Registers::xFRCR::Mask::FSOFF;
+  }
+  else
+  {
+    instance->block[static_cast<uint32_t>(block)].FRCR |= Registers::xFRCR::Mask::FSOFF;
+  }
+}
+  
+void SAI::SetFrameSynchronizationSignalRole(Block block, FrameSyncRole role)
+{
+  SAIRegisters * const instance = GetInstance(port_m);
+  
+  if(FrameSyncRole::StartOfFrame == role)
+  {
+    instance->block[static_cast<uint32_t>(block)].FRCR &= ~Registers::xFRCR::Mask::FSDEF;
+  }
+  else
+  {
+    instance->block[static_cast<uint32_t>(block)].FRCR |= Registers::xFRCR::Mask::FSDEF;
+  }
+}
+  
+void SAI::SetSlotConfiguration(Block block, uint8_t numberOfSlots, SlotSize slotSize)
+{
+  SAIRegisters * const instance = GetInstance(port_m);
+  constexpr uint32_t mask = Registers::xSLOTR::Mask::SLOTSZ |
+                            Registers::xSLOTR::Mask::NBSLOT;
+  
+  uint32_t slotr = instance->block[static_cast<uint32_t>(block)].SLOTR;
+  slotr &= ~mask;
+  
+  uint32_t slotSizeBits;
+  switch(slotSize)
+  {
+    case SlotSize::sz_DataSize:
+      slotSizeBits = (0x00U << Registers::xSLOTR::Position::SLOTSZ);
+      break;
+    case SlotSize::sz_16Bit:
+      slotSizeBits = (0x01U << Registers::xSLOTR::Position::SLOTSZ);
+      break;
+    case SlotSize::sz_32Bit:
+      slotSizeBits = (0x02U << Registers::xSLOTR::Position::SLOTSZ);
+      break;
+  }
+  
+  uint32_t slotBits = ((numberOfSlots - 1U) << Registers::xSLOTR::Position::NBSLOT) |
+                      slotSizeBits;
+  
+  slotBits &= mask;
+  slotr |= slotBits;
+  instance->block[static_cast<uint32_t>(block)].SLOTR |= slotr;
+  
+}
