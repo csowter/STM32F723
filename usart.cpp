@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <cstddef>
+#include <array>
 
 namespace 
 {
@@ -356,4 +357,139 @@ namespace
   static_assert(0x20 == offsetof(USARTRegisters, ICR));
   static_assert(0x24 == offsetof(USARTRegisters, RDR));
   static_assert(0x28 == offsetof(USARTRegisters, TDR));
+  
+  constexpr uint32_t USART1BaseAddress = 0x40011000U;
+  constexpr uint32_t USART2BaseAddress = 0x40004400U;
+  constexpr uint32_t USART3BaseAddress = 0x40004800U;
+  constexpr uint32_t UART4BaseAddress  = 0x40004C00U;
+  constexpr uint32_t UART5BaseAddress  = 0x40005000U;
+  constexpr uint32_t USART6BaseAddress = 0x40011400U;
+  constexpr uint32_t UART7BaseAddress  = 0x40007800U;
+  constexpr uint32_t UART8BaseAddress  = 0x40007C00U;
+  
+  const std::array<USARTRegisters *, 8U> USARTs {
+    reinterpret_cast<USARTRegisters *>(USART1BaseAddress),
+    reinterpret_cast<USARTRegisters *>(USART2BaseAddress),
+    reinterpret_cast<USARTRegisters *>(USART3BaseAddress),
+    reinterpret_cast<USARTRegisters *>(UART4BaseAddress),
+    reinterpret_cast<USARTRegisters *>(UART5BaseAddress),
+    reinterpret_cast<USARTRegisters *>(USART6BaseAddress),
+    reinterpret_cast<USARTRegisters *>(UART7BaseAddress),
+    reinterpret_cast<USARTRegisters *>(UART8BaseAddress)
+  };
+  
+  USARTRegisters * GetUSART(USART::Instance instance)
+  {
+    return USARTs[static_cast<std::size_t>(instance)];
+  }
+}
+
+USART::USART(Instance instance)
+: instance_m{instance}
+{
+  
+}
+
+void USART::SetBaudRate(uint32_t baudRate, uint32_t peripheralClock)
+{
+  USARTRegisters * const interface = GetUSART(instance_m);
+  const uint32_t usartDivider = peripheralClock / baudRate;
+  interface->BRR = usartDivider;
+}
+
+void USART::ConfigureFrame(DataBits dataBits, StopBits stopBits)
+{
+  USARTRegisters * const interface = GetUSART(instance_m);
+  
+  const bool uartEnabled = (Registers::CR1::Mask::UE == (interface->CR1 & Registers::CR1::Mask::UE));
+  
+  if(uartEnabled)
+  {
+    EnableUSART(false);
+  }
+  
+  constexpr uint32_t dataBitsMask = Registers::CR1::Mask::M0 |
+                                    Registers::CR1::Mask::M1;
+  
+  interface->CR1 &= ~dataBitsMask;
+  switch(dataBits)
+  {
+    case DataBits::Seven:
+      interface->CR1 |= Registers::CR1::Mask::M1;
+      break;
+    case DataBits::Eight:
+      //nothing to do
+      break;
+    case DataBits::Nine:
+      interface->CR1 |= Registers::CR1::Mask::M0;
+      break;
+  }
+  
+  interface->CR2 &= ~Registers::CR2::Mask::STOP;
+  switch(stopBits)
+  {
+    case StopBits::ZeroPointFive:
+      interface->CR2 |= (0x01U << Registers::CR2::Position::STOP);
+      break;
+    case StopBits::One:
+      //nothing to do
+      break;
+    case StopBits::OnePointFive:
+      interface->CR2 |= (0x03U << Registers::CR2::Position::STOP);
+      break;
+    case StopBits::Two:
+      interface->CR2 |= (0x02U << Registers::CR2::Position::STOP);
+      break;
+  }
+  
+  if(uartEnabled)
+  {
+    EnableUSART(true);
+  }
+}
+
+void USART::EnableUSART(bool enable)
+{
+  USARTRegisters * const interface = GetUSART(instance_m);
+  
+  if(enable) 
+  {
+    interface->CR1 |= Registers::CR1::Mask::UE;
+  }
+  else
+  {
+    interface->CR1 &= ~Registers::CR1::Mask::UE;
+  }
+}
+
+void USART::EnableTransmission(bool enable)
+{
+  USARTRegisters * const interface = GetUSART(instance_m);
+  
+  if(enable) 
+  {
+    interface->CR1 |= Registers::CR1::Mask::TE;
+  }
+  else
+  {
+    interface->CR1 &= ~Registers::CR1::Mask::TE;
+  }
+}
+
+void USART::Transmit(const uint8_t *txData, std::size_t length)
+{
+  EnableUSART(true);
+  EnableTransmission(true);
+  
+  USARTRegisters * const interface = GetUSART(instance_m);
+  
+  for(std::size_t i = 0; i < length; i++)
+  {
+    while(Registers::ISR::Mask::TXE != (interface->ISR & Registers::ISR::Mask::TXE)); //wait for tx empty
+    interface->TDR = txData[i];
+  }
+  
+  while(Registers::ISR::Mask::TC != (interface->ISR & Registers::ISR::Mask::TC)); //wait for last byte to send
+  EnableTransmission(false);
+  EnableUSART(false);
 }
