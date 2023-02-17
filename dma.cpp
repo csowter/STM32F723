@@ -2,6 +2,8 @@
 #include <cstdint>
 #include <cstddef>
 #include <array>
+#include <algorithm>
+#include <tuple>
 
 namespace 
 {
@@ -379,4 +381,336 @@ namespace
     reinterpret_cast<DMARegisters *>(DMA1Address),
     reinterpret_cast<DMARegisters *>(DMA2Address)
   }};
+  
+  void EmptyCallback(DMA::TransferFlags){}
+    
+  enum class DMAUser
+  {
+    NONE,
+    ADC1,
+    ADC2,
+    ADC3,
+    AES_IN,
+    AES_OUT,
+    DAC1,
+    DAC2,
+    I2C1_RX,
+    I2C1_TX,
+    I2C2_RX,
+    I2C2_TX,
+    I2C3_RX,
+    I2C3_TX,
+    QUADSPI,
+    SAI1_A,
+    SAI1_B,
+    SAI2_A,
+    SAI2_B,
+    SDMMC1,
+    SDMMC2,
+    SPI1_RX,
+    SPI1_TX,
+    SPI2_RX,
+    SPI2_TX,
+    SPI3_RX,
+    SPI3_TX,
+    SPI4_RX,
+    SPI4_TX,
+    SPI5_RX,
+    SPI5_TX,
+    TIM1_CH1,
+    TIM1_CH2,
+    TIM1_CH3,
+    TIM1_CH4,
+    TIM1_COM,
+    TIM1_TRIG,
+    TIM1_UP,
+    TIM2_CH1,
+    TIM2_CH2,
+    TIM2_CH3,
+    TIM2_CH4,
+    TIM2_UP,
+    TIM3_CH1,
+    TIM3_CH2,
+    TIM3_CH3,
+    TIM3_CH4,
+    TIM3_TRIG,
+    TIM3_UP,
+    TIM4_CH1,
+    TIM4_CH2,
+    TIM4_CH3,
+    TIM4_UP,
+    TIM5_CH1,
+    TIM5_CH2,
+    TIM5_CH3,
+    TIM5_CH4,
+    TIM5_TRIG,
+    TIM5_UP,
+    TIM6_UP,
+    TIM7_UP,
+    TIM8_CH1,
+    TIM8_CH2,
+    TIM8_CH3,
+    TIM8_CH4,
+    TIM8_COM,
+    TIM8_TRIG,
+    TIM8_UP,
+    UART4_RX,
+    UART4_TX,
+    UART5_RX,
+    UART5_TX,
+    UART7_RX,
+    UART7_TX,
+    UART8_RX,
+    UART8_TX,
+    USART1_RX,
+    USART1_TX,
+    USART2_RX,
+    USART2_TX,
+    USART3_RX,
+    USART3_TX,
+    USART6_RX,
+    USART6_TX
+  };
+  
+  
+  
+  struct StreamElement
+  {
+    constexpr StreamElement(DMAUser u1, DMAUser u2, DMAUser u3)
+    : users{u1, u2, u3}{}
+      
+    constexpr StreamElement(DMAUser u1, DMAUser u2)
+    : users{u1, u2, DMAUser::NONE}{}
+      
+    constexpr StreamElement(DMAUser u1)
+    : users{u1, DMAUser::NONE, DMAUser::NONE}{}
+    
+    constexpr StreamElement()
+    : users{DMAUser::NONE, DMAUser::NONE, DMAUser::NONE}{}    
+    
+    const std::array<DMAUser, 3U> users;
+  };
+  
+  using ChannelMap = std::array<StreamElement, 8U>;
+  
+  constexpr ChannelMap DMA1Channel0Map {{
+    {DMAUser::SPI3_RX},
+    {},
+    {DMAUser::SPI3_RX},
+    {DMAUser::SPI2_RX},
+    {DMAUser::SPI2_TX},
+    {DMAUser::SPI3_TX},
+    {},
+    {DMAUser::SPI3_TX}
+  }};
+  
+  constexpr ChannelMap DMA1Channel1Map {{
+    {DMAUser::I2C1_RX},
+    {DMAUser::I2C3_RX},
+    {DMAUser::TIM7_UP},
+    {},
+    {DMAUser::TIM7_UP},
+    {DMAUser::I2C1_RX},
+    {DMAUser::I2C1_TX},
+    {DMAUser::I2C1_TX}
+  }};
+  
+  constexpr ChannelMap DMA1Channel2Map {{
+    {DMAUser::TIM4_CH1},
+    {},
+    {},
+    {DMAUser::TIM4_CH2},
+    {},
+    {},
+    {DMAUser::TIM4_UP},
+    {DMAUser::TIM4_CH3}
+  }};
+  
+  constexpr ChannelMap DMA1Channel3Map {{
+    {},
+    {DMAUser::TIM2_UP, DMAUser::TIM2_CH3},
+    {DMAUser::I2C3_RX},
+    {},
+    {DMAUser::I2C3_TX},
+    {DMAUser::TIM2_CH1},
+    {DMAUser::TIM2_CH2, DMAUser::TIM2_CH4},
+    {DMAUser::TIM2_UP, DMAUser::TIM2_CH4}
+  }};
+  
+  constexpr ChannelMap DMA1Channel4Map {{
+    {DMAUser::UART5_RX},
+    {DMAUser::USART3_RX},
+    {DMAUser::UART4_RX},
+    {DMAUser::USART3_TX},
+    {DMAUser::UART4_TX},
+    {DMAUser::USART2_RX},
+    {DMAUser::USART2_TX},
+    {DMAUser::UART5_TX}
+  }};
+  
+  constexpr ChannelMap DMA1Channel5Map {{
+    {DMAUser::UART8_TX},
+    {DMAUser::UART7_TX},
+    {DMAUser::TIM3_CH4, DMAUser::TIM3_UP},
+    {DMAUser::UART7_RX},
+    {DMAUser::TIM3_CH1, DMAUser::TIM3_TRIG},
+    {DMAUser::TIM3_CH2},
+    {DMAUser::UART8_RX},
+    {DMAUser::TIM3_CH3}
+  }};
+  
+  constexpr ChannelMap DMA1Channel6Map {{
+    {DMAUser::TIM5_CH3, DMAUser::TIM5_UP},
+    {DMAUser::TIM5_CH4, DMAUser::TIM5_TRIG},
+    {DMAUser::TIM5_CH1},
+    {DMAUser::TIM5_CH4, DMAUser::TIM5_TRIG},
+    {DMAUser::TIM5_CH2},
+    {},
+    {DMAUser::TIM5_UP},
+    {}
+  }};
+  
+  constexpr ChannelMap DMA1Channel7Map {{
+    {},
+    {DMAUser::TIM6_UP},
+    {DMAUser::I2C2_RX}, 
+    {DMAUser::I2C2_RX}, 
+    {DMAUser::USART3_TX},
+    {DMAUser::DAC1},
+    {DMAUser::DAC2},
+    {DMAUser::I2C2_TX}
+  }};
+  
+  constexpr ChannelMap DMA2Channel0Map {{
+    {DMAUser::ADC1},
+    {DMAUser::SAI1_A},
+    {DMAUser::TIM8_CH1, DMAUser::TIM8_CH2, DMAUser::TIM8_CH3},
+    {DMAUser::SAI1_A},
+    {DMAUser::ADC1},
+    {DMAUser::SAI1_B},
+    {DMAUser::TIM1_CH1, DMAUser::TIM1_CH2, DMAUser::TIM1_CH3},
+    {DMAUser::SAI2_B}
+  }};
+  
+  constexpr ChannelMap DMA2Channel1Map {{
+    {},
+    {},
+    {DMAUser::ADC2},
+    {DMAUser::ADC2},
+    {DMAUser::SAI1_B},
+    {},
+    {},
+    {},
+  }};
+  
+  constexpr ChannelMap DMA2Channel2Map {{
+    {DMAUser::ADC3},
+    {DMAUser::ADC3},
+    {},
+    {DMAUser::SPI5_RX},
+    {DMAUser::SPI5_TX},
+    {DMAUser::AES_OUT},
+    {DMAUser::AES_IN},
+    {}
+  }};
+  
+  constexpr ChannelMap DMA2Channel3Map {{
+    {DMAUser::SPI1_RX}, 
+    {},
+    {DMAUser::SPI1_RX},
+    {DMAUser::SPI1_TX},
+    {DMAUser::SAI2_A},
+    {DMAUser::SPI1_TX},
+    {DMAUser::SAI2_B},
+    {DMAUser::QUADSPI},
+  }};
+  
+  constexpr ChannelMap DMA2Channel4Map {{
+    {DMAUser::SPI4_RX},
+    {DMAUser::SPI4_TX},
+    {DMAUser::USART1_RX},
+    {DMAUser::SDMMC1},
+    {},
+    {DMAUser::USART1_RX},
+    {DMAUser::SDMMC1},
+    {DMAUser::USART1_TX}
+  }};
+  
+  constexpr ChannelMap DMA2Channel5Map {{
+    {},
+    {DMAUser::USART6_RX}, 
+    {DMAUser::USART6_RX}, 
+    {DMAUser::SPI4_RX},
+    {DMAUser::SPI4_TX},
+    {},
+    {DMAUser::USART6_TX},
+    {DMAUser::USART6_TX},
+  }};
+  
+  constexpr ChannelMap DMA2Channel6Map {{
+    {DMAUser::TIM1_TRIG},
+    {DMAUser::TIM1_CH1},
+    {DMAUser::TIM1_CH2},
+    {DMAUser::TIM1_CH1},
+    {DMAUser::TIM1_CH4, DMAUser::TIM1_TRIG, DMAUser::TIM1_COM},
+    {DMAUser::TIM1_UP},
+    {DMAUser::TIM1_CH3},
+    {}
+  }};
+  
+  constexpr ChannelMap DMA2Channel7Map {{
+    {},
+    {DMAUser::TIM8_UP},
+    {DMAUser::TIM8_CH1},
+    {DMAUser::TIM8_CH2}, 
+    {DMAUser::TIM8_CH3}, 
+    {DMAUser::SPI5_RX},
+    {DMAUser::SPI5_TX},
+    {DMAUser::TIM8_CH4, DMAUser::TIM8_TRIG, DMAUser::TIM8_COM}
+  }};
+  
+  //TODO - sort this out, dma2 has more channels
+  [[maybe_unused]] constexpr ChannelMap DMA2Channel11Map {{
+    {DMAUser::SDMMC2},
+    {},
+    {},
+    {},
+    {},
+    {DMAUser::SDMMC2},
+    {},
+    {}
+  }};
+    
+  using RequestMap = std::array<ChannelMap, 8U>;
+  constexpr RequestMap DMA1RequestMapping {{
+    DMA1Channel0Map,
+    DMA1Channel1Map,
+    DMA1Channel2Map,
+    DMA1Channel3Map,
+    DMA1Channel4Map,
+    DMA1Channel5Map,
+    DMA1Channel6Map,
+    DMA1Channel7Map
+  }};
+  
+  constexpr RequestMap DMA2RequestMapping {{
+    DMA2Channel0Map,
+    DMA2Channel1Map,
+    DMA2Channel2Map,
+    DMA2Channel3Map,
+    DMA2Channel4Map,
+    DMA2Channel5Map,
+    DMA2Channel6Map,
+    DMA2Channel7Map
+  }};
+  
+  [[maybe_unused]] constexpr std::array<RequestMap, 2U> DMARequestMap {{
+    DMA1RequestMapping,
+    DMA2RequestMapping
+  }};
+}
+
+DMA::DMA()
+{
+  std::fill(transferCallbacks_m.begin(), transferCallbacks_m.end(), EmptyCallback);
 }
