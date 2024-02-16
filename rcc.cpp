@@ -391,6 +391,13 @@ namespace
   RCCRegisters * const Interface = reinterpret_cast<RCCRegisters *>(RCCBaseAddress);
 }
 
+void RCC::DisableHSI()
+{
+  uint32_t cr = Interface->CR;
+  cr &= ~Registers::CR::Mask::HSION;
+  Interface->CR = cr;
+}
+
 void RCC::EnableHSE(bool bypass)
 {
   uint32_t cr = Interface->CR;

@@ -123,6 +123,7 @@ public:
     AlternateFunctionInput
   };
 
+  static void DisableHSI();
   static void EnableHSE(bool bypass);
   static void EnablePLL();
   static bool PLLReady();
