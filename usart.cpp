@@ -382,6 +382,24 @@ namespace
   {
     return USARTs[static_cast<std::size_t>(instance)];
   }
+  
+  struct DMASetting
+  {
+    uint8_t dmaIndex;
+    uint8_t channelIndex;
+    uint8_t streamIndex;
+  };
+  const std::array<DMASetting, 8U> USARTTxDMASettings{{
+//   DMA, Channel, Stream
+    { 2U,     4U,       7U    }, //USART1
+    { 1U,     4U,       6U    }, //USART2
+    { 1U,     4U,       3U    }, //USART3
+    { 1U,     4U,       4U    }, //UART4
+    { 1U,     4U,       7U    }, //USART5
+    { 2U,     5U,       6U    }, //UART6
+    { 1U,     5U,       1U    }, //UART7
+    { 1U,     5U,       0U    }  //UART8
+  }};
 }
 
 USART::USART(Instance instance)
